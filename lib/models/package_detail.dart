@@ -1,3 +1,6 @@
+
+
+
 import 'package.dart';
 
 class PackageDetail {
