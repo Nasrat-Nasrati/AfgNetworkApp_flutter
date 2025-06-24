@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/package.dart';
 import '../models/package_detail.dart';
+import '../models/package_detail.dart';
 import '../services/api_service.dart';
 
 class BundlesScreen extends StatefulWidget {
@@ -149,9 +150,10 @@ class _BundlesScreenState extends State<BundlesScreen> {
                     ),
 
                     // Code Fields
-                    buildCodeField("Activation", bundle.activationCode),
-                    buildCodeField("Deactivation", bundle.deactivationCode),
-                    buildCodeField("Check Balance", bundle.checkBalanceCode),
+                    buildCodeField("Activation", bundle.activationCode ?? ""),
+                    buildCodeField("Deactivation", bundle.deactivationCode ?? ""),
+                    buildCodeField("Check Balance", bundle.checkBalanceCode ?? ""),
+
                   ],
                 ),
               );

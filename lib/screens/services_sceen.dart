@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/service_package.dart';
 import '../models/operator.dart';
 import '../services/api_service.dart';
+import 'general_service_screen.dart';
+
 import 'packages_screen.dart';
 
 class ServicesScreen extends StatefulWidget {
@@ -114,13 +116,23 @@ class _ServicesScreenState extends State<ServicesScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PackagesScreen(servicePackage: package),
-                      ),
-                    );
+                    if (package.isServices) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GeneralServiceScreen(servicePackage: package),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PackagesScreen(servicePackage: package),
+                        ),
+                      );
+                    }
                   },
+
                 ),
               );
             },
