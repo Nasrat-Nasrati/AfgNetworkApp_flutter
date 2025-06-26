@@ -1,6 +1,8 @@
 {
   "@@locale": "fa",
   "appTitle": "برنامه‌ی شبکه افغان",
-  "noOperatorsFound": "هیچ اپراتوری پیدا نشد"
+  "noOperatorsFound": "هیچ اپراتوری پیدا نشد",
+  "darkMode": "حالت شب",
+  "lightMode": "حالت روشن"
 
 }

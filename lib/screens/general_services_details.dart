@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import '../models/package_detail.dart';
 
@@ -8,20 +10,23 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.3), // پس‌زمینه تاریک مانند دیالوگ
+      backgroundColor: isDark ? Colors.black.withOpacity(0.6) : Colors.black.withOpacity(0.3),
       body: Center(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 30),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
+            color: isDark ? Colors.grey[900] : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
               BoxShadow(
-                color: Colors.black26,
-                blurRadius: 8,
-                offset: Offset(0, 4),
+                color: isDark ? Colors.black54 : Colors.black26,
+                blurRadius: 10,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -29,57 +34,68 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 📦 نام بسته
+              // 📦 Package Name
               Text(
                 packageDetail.name,
-                style: const TextStyle(
-                  fontSize: 18,
+                style: TextStyle(
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
 
-              // 🔢 کد
+              // 🔢 Code
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'Code:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isDark ? Colors.grey[300] : Colors.grey[800],
+                    ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     packageDetail.code,
-                    style: const TextStyle(fontSize: 15),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
 
-              // 📝 توضیحات
+              // 📝 Description
               Text(
                 packageDetail.description ?? 'توضیحی در دسترس نیست.',
-                style: const TextStyle(fontSize: 15),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.grey[300] : Colors.grey[800],
+                ),
                 textAlign: TextAlign.center,
               ),
-
               const SizedBox(height: 24),
 
-              // 🔘 دکمه بستن
+              // 🔘 Close Button
               ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.close),
-                label: const Text("Close"),
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close, color: isDark ? Colors.white : Colors.black),
+                label: Text(
+                  "Close",
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade300,
-                  foregroundColor: Colors.black87,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  backgroundColor: isDark ? Colors.indigo.shade700 : Colors.grey.shade300,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 3,
                 ),
               ),
             ],

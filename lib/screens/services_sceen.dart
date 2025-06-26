@@ -1,9 +1,10 @@
+
+
 import 'package:flutter/material.dart';
 import '../models/service_package.dart';
 import '../models/operator.dart';
 import '../services/api_service.dart';
 import 'general_service_screen.dart';
-
 import 'packages_screen.dart';
 
 class ServicesScreen extends StatefulWidget {
@@ -25,48 +26,72 @@ class _ServicesScreenState extends State<ServicesScreen> {
     futurePackages = apiService.fetchServicePackagesByOperator(widget.operator.id);
   }
 
-  Icon _getIconForPackageName(String name) {
+  Icon _getIconForPackageName(String name, bool isDarkMode) {
     final lowerName = name.toLowerCase();
+    Color iconColor;
     if (lowerName.contains('internet') || lowerName.contains('اینترنت')) {
-      return Icon(Icons.wifi, color: Colors.blue);
+      iconColor = isDarkMode ? Colors.blue[300]! : Colors.blue;
+      return Icon(Icons.wifi, color: iconColor);
     } else if (lowerName.contains('call') || lowerName.contains('تماس')) {
-      return Icon(Icons.call, color: Colors.green);
+      iconColor = isDarkMode ? Colors.green[300]! : Colors.green;
+      return Icon(Icons.call, color: iconColor);
     } else if (lowerName.contains('message') || lowerName.contains('پیام')) {
-      return Icon(Icons.message, color: Colors.orange);
+      iconColor = isDarkMode ? Colors.orange[300]! : Colors.orange;
+      return Icon(Icons.message, color: iconColor);
     } else if (lowerName.contains('sms')) {
-      return Icon(Icons.sms, color: Colors.orange);
+      iconColor = isDarkMode ? Colors.orange[300]! : Colors.orange;
+      return Icon(Icons.sms, color: iconColor);
     } else if (lowerName.contains('data')) {
-      return Icon(Icons.data_usage, color: Colors.purple);
+      iconColor = isDarkMode ? Colors.purple[300]! : Colors.purple;
+      return Icon(Icons.data_usage, color: iconColor);
     } else if (lowerName.contains('video')) {
-      return Icon(Icons.videocam, color: Colors.red);
+      iconColor = isDarkMode ? Colors.red[300]! : Colors.red;
+      return Icon(Icons.videocam, color: iconColor);
     } else if (lowerName.contains('services') || lowerName.contains('خدمات')) {
-      return Icon(Icons.miscellaneous_services, color: Colors.red);
+      iconColor = isDarkMode ? Colors.red[200]! : Colors.red;
+      return Icon(Icons.miscellaneous_services, color: iconColor);
     } else {
-      return Icon(Icons.local_offer, color: Colors.grey);
+      iconColor = isDarkMode ? Colors.grey[400]! : Colors.grey;
+      return Icon(Icons.local_offer, color: iconColor);
     }
   }
 
-  Color _getBackgroundColorForPackageName(String name) {
+  Color _getBackgroundColorForPackageName(String name, ThemeData theme) {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('internet') || lowerName.contains('اینترنت')) {
-      return Colors.blue.shade50;
+      return theme.brightness == Brightness.light
+          ? Colors.blue.shade50
+          : Colors.blue.shade900.withOpacity(0.3);
     } else if (lowerName.contains('call') || lowerName.contains('تماس')) {
-      return Colors.green.shade50;
+      return theme.brightness == Brightness.light
+          ? Colors.green.shade50
+          : Colors.green.shade900.withOpacity(0.3);
     } else if (lowerName.contains('message') || lowerName.contains('پیام') || lowerName.contains('sms')) {
-      return Colors.orange.shade50;
+      return theme.brightness == Brightness.light
+          ? Colors.orange.shade50
+          : Colors.orange.shade900.withOpacity(0.3);
     } else if (lowerName.contains('data')) {
-      return Colors.purple.shade50;
+      return theme.brightness == Brightness.light
+          ? Colors.purple.shade50
+          : Colors.purple.shade900.withOpacity(0.3);
     } else if (lowerName.contains('video')) {
-      return Colors.red.shade50;
+      return theme.brightness == Brightness.light
+          ? Colors.red.shade50
+          : Colors.red.shade900.withOpacity(0.3);
     } else if (lowerName.contains('services') || lowerName.contains('خدمات')) {
-      return Colors.red.shade100;
+      return theme.brightness == Brightness.light
+          ? Colors.red.shade100
+          : Colors.red.shade900.withOpacity(0.4);
     } else {
-      return Colors.grey.shade200;
+      return theme.cardColor;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Services - ${widget.operator.name}'),
@@ -92,23 +117,22 @@ class _ServicesScreenState extends State<ServicesScreen> {
               final package = packages[index];
               return Container(
                 decoration: BoxDecoration(
-                  color: _getBackgroundColorForPackageName(package.name),
+                  color: _getBackgroundColorForPackageName(package.name, theme),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
+                      color: isDarkMode ? Colors.black54 : Colors.black12,
                       blurRadius: 6,
                       offset: Offset(0, 3),
                     ),
                   ],
                 ),
                 child: ListTile(
-                  leading: _getIconForPackageName(package.name),
+                  leading: _getIconForPackageName(package.name, isDarkMode),
                   title: Text(
                     package.name,
-                    style: TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
                     ),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -132,7 +156,6 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       );
                     }
                   },
-
                 ),
               );
             },
@@ -142,6 +165,4 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 }
-
-
 

@@ -1,10 +1,12 @@
+
+
+
 import 'package:flutter/material.dart';
 import '../models/service_package.dart';
 import '../models/package.dart';
 import '../services/api_service.dart';
 import '../models/package_detail.dart';
 import 'general_services_details.dart';
-import 'bandels_screen.dart';
 
 class GeneralServiceScreen extends StatefulWidget {
   final ServicePackage servicePackage;
@@ -27,30 +29,63 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.grey.shade100,
       appBar: AppBar(
-        title: Text('Services of ${widget.servicePackage.operator.name}'),
-        backgroundColor: Colors.indigo,
+        title: Text(
+          'Services of ${widget.servicePackage.operator.name}',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: isDarkMode ? Colors.indigo.shade700 : Colors.indigo,
+        elevation: 4,
+        centerTitle: true,
       ),
       body: FutureBuilder<List<Package>>(
         future: futurePackages,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.indigo));
+            return Center(
+              child: CircularProgressIndicator(
+                color: isDarkMode ? Colors.indigo.shade200 : Colors.indigo,
+              ),
+            );
           } else if (snapshot.hasError) {
-            return Center(child: Text('❌ ${snapshot.error}', style: TextStyle(color: Colors.red)));
+            return Center(
+              child: Text(
+                '❌ ${snapshot.error}',
+                style: TextStyle(
+                  color: Colors.red.shade400,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('🚫 هیچ پکیجی یافت نشد.'));
+            return Center(
+              child: Text(
+                '🚫 هیچ پکیجی یافت نشد.',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade700,
+                ),
+              ),
+            );
           }
 
           final packages = snapshot.data!;
           return GridView.builder(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(14),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.9,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              childAspectRatio: 0.85,
             ),
             itemCount: packages.length,
             itemBuilder: (context, index) {
@@ -60,9 +95,16 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
-                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                    builder: (_) => const AlertDialog(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      content: Center(
+                        heightFactor: 1,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                   );
-
+                  
                   try {
                     List<PackageDetail> details = await apiService.fetchPackageDetailsByPackage(package.id);
 
@@ -92,37 +134,41 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.indigo.shade50,
+                    color: isDarkMode ? Colors.grey.shade900 : Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 6),
                       ),
                     ],
+                    border: Border.all(
+                      color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.indigo.withOpacity(0.2),
+                          color: isDarkMode ? Colors.indigo.shade700.withOpacity(0.4) : Colors.indigo.withOpacity(0.2),
                         ),
-                        child: const Icon(Icons.card_giftcard, size: 28, color: Colors.indigo),
+                        child: Icon(Icons.card_giftcard, size: 30, color: isDarkMode ? Colors.indigo.shade200 : Colors.indigo),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 14),
                       Text(
                         package.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          fontSize: 13,
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 2,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -136,3 +182,4 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
     );
   }
 }
+

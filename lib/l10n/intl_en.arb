@@ -1,6 +1,8 @@
 {
   "@@locale": "en",
   "appTitle": "AfgNetwork App",
-  "noOperatorsFound": "No operators found"
+  "noOperatorsFound": "No operators found",
+  "darkMode": "Switch to Dark Mode",
+  "lightMode": "Switch to Light Mode"
 
 }

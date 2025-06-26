@@ -1,6 +1,8 @@
 {
   "@@locale": "ps",
   "appTitle": "د افغان شبکې اپلیکیشن",
-  "noOperatorsFound": "هیڅ اپراتور ونه موندل شو"
+  "noOperatorsFound": "هیڅ اپراتور ونه موندل شو",
+  "darkMode": "تیاره حالت",
+  "lightMode": "روښانه حالت"
 
 }

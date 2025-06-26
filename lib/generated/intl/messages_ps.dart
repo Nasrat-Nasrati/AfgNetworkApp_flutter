@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "appTitle": MessageLookupByLibrary.simpleMessage("د افغان شبکې اپلیکیشن"),
+    "darkMode": MessageLookupByLibrary.simpleMessage("تیاره حالت"),
+    "lightMode": MessageLookupByLibrary.simpleMessage("روښانه حالت"),
     "noOperatorsFound": MessageLookupByLibrary.simpleMessage(
       "هیڅ اپراتور ونه موندل شو",
     ),
