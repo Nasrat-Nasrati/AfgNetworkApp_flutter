@@ -1,12 +1,10 @@
-
-
-
 import 'package:flutter/material.dart';
 import '../models/service_package.dart';
 import '../models/package.dart';
 import '../services/api_service.dart';
 import '../models/package_detail.dart';
 import 'general_services_details.dart';
+import '../generated/l10n.dart'; // Import generated localization
 
 class GeneralServiceScreen extends StatefulWidget {
   final ServicePackage servicePackage;
@@ -31,12 +29,13 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    final s = S.of(context); // <-- Localization shortcut
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
-          'Services of ${widget.servicePackage.operator.name}',
+          '${s.servicesOf} ${widget.servicePackage.operator.name}', // localized
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -69,7 +68,7 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Text(
-                '🚫 هیچ پکیجی یافت نشد.',
+                '🚫 ${s.noPackagesFound}', // localized
                 style: TextStyle(
                   fontSize: 10,
                   color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade700,
@@ -104,7 +103,7 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                       ),
                     ),
                   );
-                  
+
                   try {
                     List<PackageDetail> details = await apiService.fetchPackageDetailsByPackage(package.id);
 
@@ -112,7 +111,7 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
 
                     if (details.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('❌ هیچ جزییاتی برای این پکیج یافت نشد')),
+                        SnackBar(content: Text('❌ ${s.noDetailsFound}')),
                       );
                       return;
                     }
@@ -128,7 +127,7 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                   } catch (e) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('خطا در دریافت جزییات پکیج: $e')),
+                      SnackBar(content: Text('${s.errorFetchingDetails} $e')),
                     );
                   }
                 },

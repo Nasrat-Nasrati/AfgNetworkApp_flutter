@@ -1,8 +1,29 @@
 {
   "@@locale": "ps",
-  "appTitle": "د افغان شبکې اپلیکیشن",
+  "appTitle": "د افغان شبکه اپلیکیشن",
   "noOperatorsFound": "هیڅ اپراتور ونه موندل شو",
   "darkMode": "تیاره حالت",
-  "lightMode": "روښانه حالت"
-
+  "lightMode": "روښانه حالت",
+  "Services": "خدمات",
+  "noDetailsInPackages": "په دې بسته‌وو کې هیڅ تفصیل ونه موندل شو",
+  "notFoundAnyPackages": "هیڅ بسته ونه موندل شوه",
+  "errorInFindingPackageDetails": "د بسته تفصیل اخیستو کې تېروتنه",
+  "noPackagesFound": "هیڅ بسته ونه موندل شوه.",
+  "noServicesFoundForOperator": "د دې اپراتور لپاره هیڅ خدمت ونه موندل شو.",
+  "servicesTitle": "خدمتونه - {operator}",
+  "errorFetchingServices": "❌ تېروتنه: {error}",
+  "packagesTitle": "📦 بسته‌وې - {name}",
+  "errorFetchingPackages": "❌ تېروتنه: {error}",
+  "codeLabel": "کوډ:",
+  "noDetailsAvailable": "هیڅ تفصیل شتون نه لري",
+  "close": "بندول",
+  "servicesOf": "د خدماتو چمتو کوونکی:",
+  "noDetailsFound": "په دې بسته کې هیڅ تفصیل ونه موندل شو",
+  "errorFetchingDetails": "د بسته تفصیل اخیستو کې تېروتنه",
+  "bundles": "بسته‌وې",
+  "noBundlesFound": "هیڅ بسته ونه موندل شوه.",
+  "activation": "فعالول",
+  "deactivation": "غیرفعالول",
+  "checkBalance": "بیلانس وګورئ",
+  "afn": "افغانی"
 }

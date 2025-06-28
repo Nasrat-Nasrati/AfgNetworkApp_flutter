@@ -1,7 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 import '../models/package_detail.dart';
+import '../generated/l10n.dart';
 
 class GeneralServicesDetailsScreen extends StatelessWidget {
   final PackageDetail packageDetail;
@@ -51,7 +50,7 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Code:',
+                    '${S.of(context).codeLabel}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -72,7 +71,7 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
 
               // 📝 Description
               Text(
-                packageDetail.description ?? 'توضیحی در دسترس نیست.',
+                packageDetail.description ?? S.of(context).noDetailsAvailable,
                 style: TextStyle(
                   fontSize: 15,
                   color: isDark ? Colors.grey[300] : Colors.grey[800],
@@ -86,7 +85,7 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.close, color: isDark ? Colors.white : Colors.black),
                 label: Text(
-                  "Close",
+                  S.of(context).close,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -105,3 +104,4 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
     );
   }
 }
+

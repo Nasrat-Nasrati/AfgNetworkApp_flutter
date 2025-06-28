@@ -1,11 +1,10 @@
-
-
 import 'package:flutter/material.dart';
 import '../models/service_package.dart';
 import '../models/operator.dart';
 import '../services/api_service.dart';
 import 'general_service_screen.dart';
 import 'packages_screen.dart';
+import '../generated/l10n.dart'; // اضافه برای ترجمه
 
 class ServicesScreen extends StatefulWidget {
   final Operator operator;
@@ -94,7 +93,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Services - ${widget.operator.name}'),
+        title: Text(S.of(context).servicesTitle(widget.operator.name)), // ✅ ترجمه
         centerTitle: true,
       ),
       body: FutureBuilder<List<ServicePackage>>(
@@ -103,9 +102,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('❌ ${snapshot.error}'));
+            return Center(
+              child: Text(S.of(context).errorFetchingServices(snapshot.error.toString())), // ✅ ترجمه
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No services found for this operator.'));
+            return Center(child: Text(S.of(context).noServicesFoundForOperator)); // ✅ ترجمه
           }
 
           final packages = snapshot.data!;
@@ -165,4 +166,5 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
   }
 }
+
 

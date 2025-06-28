@@ -1,10 +1,10 @@
 
-
 import 'package:flutter/material.dart';
 import '../models/package.dart';
 import '../models/service_package.dart';
 import '../services/api_service.dart';
 import 'bandels_screen.dart';
+import '../generated/l10n.dart'; // برای ترجمه
 
 class PackagesScreen extends StatefulWidget {
   final ServicePackage servicePackage;
@@ -34,10 +34,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
       backgroundColor: isDarkMode ? Colors.black : Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
-          '📦 Packages - ${widget.servicePackage.name}',
+          S.of(context).packagesTitle(widget.servicePackage.name), // ✅ ترجمه شده
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.white,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -56,7 +56,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
           } else if (snapshot.hasError) {
             return Center(
               child: Text(
-                '❌ ${snapshot.error}',
+                S.of(context).errorFetchingPackages(snapshot.error.toString()), // ✅ ترجمه شده
                 style: TextStyle(color: Colors.red.shade400, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -64,7 +64,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Text(
-                '🚫 No packages found.',
+                S.of(context).noPackagesFound, // ✅ ترجمه شده
                 style: TextStyle(
                   fontSize: 16,
                   color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -133,3 +133,6 @@ class _PackagesScreenState extends State<PackagesScreen> {
     );
   }
 }
+
+
+
