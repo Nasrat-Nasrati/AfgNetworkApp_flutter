@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/operator.dart';
@@ -39,8 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = Localizations.localeOf(context).languageCode == 'fa' ||
-        Localizations.localeOf(context).languageCode == 'ps';
+    final String currentLang = Localizations.localeOf(context).languageCode;
+    final bool isRtl = currentLang == 'fa' || currentLang == 'ps';
 
     return Directionality(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
@@ -56,7 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
               tooltip: widget.isDarkMode
                   ? S.of(context).lightMode
                   : S.of(context).darkMode,
-              icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+              icon: Icon(
+                widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              ),
               onPressed: widget.toggleTheme,
             ),
             PopupMenuButton<String>(
@@ -66,13 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 PopupMenuItem(value: 'fa', child: Text('دری')),
                 PopupMenuItem(value: 'ps', child: Text('پښتو')),
               ],
-              child: Row(
-                children: [
-
-                  SizedBox(width: 4),
-                  Icon(Icons.language,
-                      color: Theme.of(context).iconTheme.color),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(Icons.language, color: Theme.of(context).iconTheme.color),
               ),
             ),
           ],

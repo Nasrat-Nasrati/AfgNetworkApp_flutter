@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart'; // Add this in pubspec.yaml
 import 'generated/l10n.dart';
 import 'screens/home_screen.dart';
+import 'package:flutter/foundation.dart';
+
 
 void main() {
   runApp(const AfgNetworkApp());
@@ -18,7 +20,7 @@ class AfgNetworkApp extends StatefulWidget {
 }
 
 class _AfgNetworkAppState extends State<AfgNetworkApp> {
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('fa');
   ThemeMode _themeMode = ThemeMode.light;
 
   void _setLocale(Locale newLocale) {
