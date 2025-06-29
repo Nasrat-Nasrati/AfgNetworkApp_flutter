@@ -33,12 +33,17 @@ dev_dependencies:
   http: ^0.13.5
   cupertino_icons: ^1.0.2
   intl_utils: ^2.8.4
+  url_launcher: ^6.1.10
 
   # Flutter linting rules
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Vazir  # You can name it whatever you want
+      fonts:
+        - asset: assets\fonts\Vazir-Regular.ttf
 
 # ✅ تنظیمات پلاگین Flutter Intl برای ترجمه
 flutter_intl:

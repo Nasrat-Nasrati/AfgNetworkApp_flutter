@@ -1,11 +1,8 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart'; // Add this in pubspec.yaml
+import 'package:google_fonts/google_fonts.dart'; // keep if you want fallback fonts or mix usage
 import 'generated/l10n.dart';
 import 'screens/home_screen.dart';
-import 'package:flutter/foundation.dart';
 
 
 void main() {
@@ -20,7 +17,7 @@ class AfgNetworkApp extends StatefulWidget {
 }
 
 class _AfgNetworkAppState extends State<AfgNetworkApp> {
-  Locale _locale = const Locale('fa');
+  Locale _locale = const Locale('fa'); // Default to Persian/Dari
   ThemeMode _themeMode = ThemeMode.light;
 
   void _setLocale(Locale newLocale) {
@@ -42,23 +39,27 @@ class _AfgNetworkAppState extends State<AfgNetworkApp> {
       title: 'AfgNetwork App',
       theme: ThemeData(
         brightness: Brightness.light,
+        fontFamily: 'IranianSans',  // Custom Dari font for light theme
         scaffoldBackgroundColor: Colors.grey[100],
         cardColor: Colors.white,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
         ),
-        textTheme: GoogleFonts.robotoTextTheme(), // Optional: You can remove this line if you don’t want Roboto
+        // Optional fallback text theme, can be combined or removed if you want pure IranianSans
+        textTheme: GoogleFonts.robotoTextTheme(),
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        fontFamily: 'IranianSans',  // Custom Dari font for dark theme
         scaffoldBackgroundColor: Colors.grey[900],
         cardColor: Colors.grey[800],
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey[850],
+          backgroundColor: Colors.grey[850],  // این خط حالا اشکال ندارد
           foregroundColor: Colors.white,
         ),
-        textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme), // Optional
+
+        textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: _themeMode,
       locale: _locale,
