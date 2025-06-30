@@ -34,6 +34,10 @@ dev_dependencies:
   cupertino_icons: ^1.0.2
   intl_utils: ^2.8.4
   url_launcher: ^6.1.10
+  sqflite: ^2.3.2
+  path_provider: ^2.1.2
+  path: ^1.9.0
+  connectivity_plus: ^5.0.2
 
   # Flutter linting rules
   flutter_lints: ^5.0.0

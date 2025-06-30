@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/api_service.dart';
 import '../models/operator.dart';
 import 'services_sceen.dart';
 import '../generated/l10n.dart';
+import '../services//sync_service.dart';
+import '../database/db_helper.dart';
+
+
+
+
 
 class HomeScreen extends StatefulWidget {
   final void Function(Locale) setLocale;
@@ -21,13 +28,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Operator>> futureOperators;
   final ApiService apiService = ApiService();
+  final SyncService syncService = SyncService();
+  late Future<List<Operator>> futureOperators;
 
   @override
   void initState() {
     super.initState();
-    futureOperators = apiService.fetchAllOperators();
+    _checkAndSyncData();
+  }
+
+  Future<void> _checkAndSyncData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult != ConnectivityResult.none) {
+      await syncService.syncAllData();
+      futureOperators = apiService.fetchAllOperators(); // آنلاین
+    } else {
+      futureOperators = DatabaseHelper().getOperators(); // ✅ درست
+
+      print("شما در حالت آفلاین هستید.");
+    }
+    setState(() {});
   }
 
   void _changeLanguage(String langCode) {
@@ -138,3 +159,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+

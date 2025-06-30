@@ -1,4 +1,3 @@
-
 import 'package.dart';
 
 class PackageDetail {
@@ -30,7 +29,8 @@ class PackageDetail {
     required this.buttonCheckBlance,
   });
 
-
+  // ✅ Getter برای گرفتن فقط آیدی Package
+  int get packageId => package.id;
 
   factory PackageDetail.fromJson(Map<String, dynamic> json) {
     return PackageDetail(
@@ -60,3 +60,4 @@ class PackageDetail {
     }
   }
 }
+
