@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../services/api_service.dart';
-import '../models/operator.dart';
-import 'services_sceen.dart';
-import '../services/sync_service.dart';
+
 import '../database/db_helper.dart';
+import '../models/operator.dart';
+import '../services/sync_service.dart';
+import 'services_sceen.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function() toggleTheme;
@@ -25,10 +25,39 @@ class _HomeScreenState extends State<HomeScreen> {
   final syncService = SyncService();
   late Future<List<Operator>> futureOperators;
 
+  // تصاویر اسلایدشو
+  final List<String> imagePaths = [
+    'assets/images/1.png',
+    'assets/images/2.png',
+    'assets/images/3.png',
+    'assets/images/4.png',
+  ];
+
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
   @override
   void initState() {
     super.initState();
     _checkAndSyncData();
+
+    // برای خودکار حرکت دادن اسلایدشو (هر 3 ثانیه)
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  void _autoSlide() {
+    if (!_pageController.hasClients) return;
+
+    int nextPage = (_currentPage + 1) % imagePaths.length;
+    _pageController.animateToPage(
+      nextPage,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+
+    _currentPage = nextPage;
+
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
   Future<void> _checkAndSyncData() async {
@@ -51,8 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // چون فقط فارسی دری داریم، راست به چپ است
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -65,12 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
               tooltip: widget.isDarkMode ? 'حالت روشن' : 'حالت تاریک',
-              icon: Icon(
-                widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-              ),
+              icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
               onPressed: widget.toggleTheme,
             ),
-            // منوی تغییر زبان حذف شده چون فقط فارسی داریم
           ],
         ),
         body: FutureBuilder<List<Operator>>(
@@ -85,52 +118,134 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             final operators = snapshot.data!;
-            return GridView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: operators.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemBuilder: (context, index) {
-                final operator = operators[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ServicesScreen(operator: operator),
+
+            return Column(
+              children: [
+                // اسلایدشو با ارتفاع 35% صفحه
+                SizedBox(
+                  height: screenHeight * 0.35,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: imagePaths.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.asset(
+                                  imagePaths[index],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      // اندیکاتور دایره‌ای
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(imagePaths.length, (index) {
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              width: _currentPage == index ? 14 : 10,
+                              height: _currentPage == index ? 14 : 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _currentPage == index
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.grey.shade400,
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // لیست اپراتورها با ارتفاع باقی مانده و قابلیت اسکرول
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
                     ),
-                    color: Theme.of(context).cardColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.network(operator.logo, height: 60),
-                          const SizedBox(height: 10),
-                          Text(
-                            operator.name,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                    child: GridView.builder(
+                      itemCount: operators.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.85,
+                      ),
+                      itemBuilder: (context, index) {
+                        final operator = operators[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ServicesScreen(operator: operator),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            color: Theme.of(context).colorScheme.surface,
+                            shadowColor: Colors.black45,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.network(
+                                    operator.logo,
+                                    height: 60,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    operator.name,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      color: Theme.of(context).textTheme.bodyLarge!.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
+                ),
+              ],
             );
           },
         ),

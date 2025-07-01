@@ -22,6 +22,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^5.3.2
   flutter_lints: ^5.0.0
   google_fonts: ^4.0.4
   sqflite: ^2.3.2
@@ -29,71 +30,15 @@ dev_dependencies:
   path: ^1.9.0
   connectivity_plus: ^5.0.2
   url_launcher: ^6.1.10
+  carousel_slider: 4.0.0
+
+
+
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/images/
 
 
-#
-#
-#name: first_mobile_app_afg_network
-#description: "A new Flutter project."
-#publish_to: 'none' # Prevent accidental publishing to pub.dev
-#
-#version: 1.0.0+1
-#
-#environment:
-#  sdk: ^3.8.1
-#
-#dependencies:
-#  flutter:
-#    sdk: flutter
-#
-#  # Localization support for multiple languages
-#  flutter_localizations:
-#    sdk: flutter
-#
-#  # Internationalization package for working with .arb files
-#  intl: ^0.20.2
-#
-#  # For HTTP API requests
-#  http: ^0.13.5
-#
-#  # iOS-style icons
-#  cupertino_icons: ^1.0.8
-#
-#dev_dependencies:
-#  flutter_test:
-#    sdk: flutter
-#  google_fonts: ^4.0.4
-#  http: ^0.13.5
-#  cupertino_icons: ^1.0.2
-#  intl_utils: ^2.8.4
-#  url_launcher: ^6.1.10
-#  sqflite: ^2.3.2
-#  path_provider: ^2.1.2
-#  path: ^1.9.0
-#  connectivity_plus: ^5.0.2
-#
-#  # Flutter linting rules
-#  flutter_lints: ^5.0.0
-#
-#flutter:
-#  uses-material-design: true
-#  generate: true
-#  fonts:
-#    - family: Vazir  # You can name it whatever you want
-#      fonts:
-#        - asset: assets\fonts\Vazir-Regular.ttf
-#
-## ✅ تنظیمات پلاگین Flutter Intl برای ترجمه
-#flutter_intl:
-#  enabled: true
-#  arb_dir: lib/i10n  ✅
-#  output_dir: lib/generated
-#
-## ✅ اگر از flutter_gen برای ژنریشن استفاده می‌کنی
-#flutter_gen:
-#  integrations:
-#    flutter_localizations: true
