@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import '../models/service_package.dart';
 import '../models/package.dart';
-import '../services/api_service.dart';
 import '../models/package_detail.dart';
+import '../services/api_service.dart';
+import '../database/db_helper.dart';
 import 'general_services_details.dart';
-import '../generated/l10n.dart'; // Import generated localization
 
 class GeneralServiceScreen extends StatefulWidget {
   final ServicePackage servicePackage;
@@ -17,60 +19,75 @@ class GeneralServiceScreen extends StatefulWidget {
 
 class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
   final ApiService apiService = ApiService();
+  final DatabaseHelper dbHelper = DatabaseHelper();
+  final connectivity = Connectivity();
   late Future<List<Package>> futurePackages;
 
   @override
   void initState() {
     super.initState();
-    futurePackages = apiService.fetchPackagesByServicePackage(widget.servicePackage.id);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final localPackages = await dbHelper.getPackages(widget.servicePackage.id);
+
+    if (localPackages.isEmpty) {
+      var connection = await connectivity.checkConnectivity();
+      if (connection != ConnectivityResult.none) {
+        final fetched = await apiService.fetchPackagesByServicePackage(widget.servicePackage.id);
+        for (var item in fetched) {
+          await dbHelper.insertPackage(item);
+        }
+        futurePackages = dbHelper.getPackages(widget.servicePackage.id);
+      } else {
+        futurePackages = Future.value([]);
+        print("📴 اینترنت قطع است و دیتایی موجود نیست.");
+      }
+    } else {
+      futurePackages = Future.value(localPackages);
+    }
+
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    final s = S.of(context); // <-- Localization shortcut
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
-          '${s.servicesOf} ${widget.servicePackage.operator.name}', // localized
+          'خدمات ${widget.servicePackage.operator.name}',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
         backgroundColor: isDarkMode ? Colors.indigo.shade700 : Colors.indigo,
-        elevation: 4,
         centerTitle: true,
       ),
       body: FutureBuilder<List<Package>>(
         future: futurePackages,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: isDarkMode ? Colors.indigo.shade200 : Colors.indigo,
-              ),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
               child: Text(
-                '❌ ${snapshot.error}',
-                style: TextStyle(
-                  color: Colors.red.shade400,
-                  fontSize: 16,
-                ),
+                '❌ خطا در دریافت داده: ${snapshot.error}',
+                style: TextStyle(color: Colors.red),
                 textAlign: TextAlign.center,
               ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Text(
-                '🚫 ${s.noPackagesFound}', // localized
+                '🚫 هیچ پکیجی یافت نشد.',
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 16,
                   color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade700,
                 ),
               ),
@@ -97,37 +114,55 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                     builder: (_) => const AlertDialog(
                       backgroundColor: Colors.transparent,
                       elevation: 0,
-                      content: Center(
-                        heightFactor: 1,
-                        child: CircularProgressIndicator(),
-                      ),
+                      content: Center(child: CircularProgressIndicator()),
                     ),
                   );
 
                   try {
-                    List<PackageDetail> details = await apiService.fetchPackageDetailsByPackage(package.id);
-
-                    Navigator.of(context).pop();
+                    final details = await dbHelper.getPackageDetails(package.id);
 
                     if (details.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('❌ ${s.noDetailsFound}')),
-                      );
-                      return;
-                    }
+                      var connection = await connectivity.checkConnectivity();
+                      if (connection != ConnectivityResult.none) {
+                        final fetched = await apiService.fetchPackageDetailsByPackage(package.id);
+                        for (var item in fetched) {
+                          await dbHelper.insertPackageDetail(item);
+                        }
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GeneralServicesDetailsScreen(
-                          packageDetail: details[0],
+                        Navigator.of(context).pop();
+
+                        if (fetched.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('❌ جزئیاتی یافت نشد.')),
+                          );
+                          return;
+                        }
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => GeneralServicesDetailsScreen(packageDetail: fetched[0]),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('📴 اینترنت قطع است و دیتایی موجود نیست.')),
+                        );
+                      }
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GeneralServicesDetailsScreen(packageDetail: details[0]),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   } catch (e) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${s.errorFetchingDetails} $e')),
+                      SnackBar(content: Text('خطا در دریافت جزئیات: $e')),
                     );
                   }
                 },
@@ -154,9 +189,15 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isDarkMode ? Colors.indigo.shade700.withOpacity(0.4) : Colors.indigo.withOpacity(0.2),
+                          color: isDarkMode
+                              ? Colors.indigo.shade700.withOpacity(0.4)
+                              : Colors.indigo.withOpacity(0.2),
                         ),
-                        child: Icon(Icons.card_giftcard, size: 30, color: isDarkMode ? Colors.indigo.shade200 : Colors.indigo),
+                        child: Icon(
+                          Icons.card_giftcard,
+                          size: 30,
+                          color: isDarkMode ? Colors.indigo.shade200 : Colors.indigo,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       Text(
@@ -181,4 +222,3 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
     );
   }
 }
-

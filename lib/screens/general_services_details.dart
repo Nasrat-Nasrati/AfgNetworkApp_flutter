@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/package_detail.dart';
-import '../generated/l10n.dart';
 
 class GeneralServicesDetailsScreen extends StatelessWidget {
   final PackageDetail packageDetail;
@@ -33,7 +32,7 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 📦 Package Name
+              // 📦 نام پکیج
               Text(
                 packageDetail.name,
                 style: TextStyle(
@@ -45,12 +44,12 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 🔢 Code
+              // 🔢 کد پکیج
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${S.of(context).codeLabel}',
+                    'کد:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -69,9 +68,9 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 📝 Description
+              // 📝 توضیحات
               Text(
-                packageDetail.description ?? S.of(context).noDetailsAvailable,
+                packageDetail.description ?? 'اطلاعات بیشتری موجود نیست.',
                 style: TextStyle(
                   fontSize: 15,
                   color: isDark ? Colors.grey[300] : Colors.grey[800],
@@ -80,12 +79,12 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // 🔘 Close Button
+              // 🔘 دکمه بستن
               ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.close, color: isDark ? Colors.white : Colors.black),
                 label: Text(
-                  S.of(context).close,
+                  'بستن',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -104,4 +103,3 @@ class GeneralServicesDetailsScreen extends StatelessWidget {
     );
   }
 }
-

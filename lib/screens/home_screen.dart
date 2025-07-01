@@ -3,22 +3,15 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/api_service.dart';
 import '../models/operator.dart';
 import 'services_sceen.dart';
-import '../generated/l10n.dart';
-import '../services//sync_service.dart';
+import '../services/sync_service.dart';
 import '../database/db_helper.dart';
 
-
-
-
-
 class HomeScreen extends StatefulWidget {
-  final void Function(Locale) setLocale;
   final void Function() toggleTheme;
   final bool isDarkMode;
 
   const HomeScreen({
     Key? key,
-    required this.setLocale,
     required this.toggleTheme,
     required this.isDarkMode,
   }) : super(key: key);
@@ -28,8 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ApiService apiService = ApiService();
-  final SyncService syncService = SyncService();
+  final dbHelper = DatabaseHelper();
+  final syncService = SyncService();
   late Future<List<Operator>> futureOperators;
 
   @override
@@ -39,77 +32,63 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _checkAndSyncData() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult != ConnectivityResult.none) {
-      await syncService.syncAllData();
-      futureOperators = apiService.fetchAllOperators(); // آنلاین
+    final localOperators = await dbHelper.getOperators();
+
+    if (localOperators.isEmpty) {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult != ConnectivityResult.none) {
+        await syncService.syncAllData();
+        futureOperators = dbHelper.getOperators();
+      } else {
+        futureOperators = Future.value([]);
+        print("❌ دیتایی یافت نشد و اینترنت هم وصل نیست.");
+      }
     } else {
-      futureOperators = DatabaseHelper().getOperators(); // ✅ درست
-
-      print("شما در حالت آفلاین هستید.");
+      futureOperators = Future.value(localOperators);
     }
-    setState(() {});
-  }
 
-  void _changeLanguage(String langCode) {
-    Locale newLocale = Locale(langCode);
-    widget.setLocale(newLocale);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final String currentLang = Localizations.localeOf(context).languageCode;
-    final bool isRtl = currentLang == 'fa' || currentLang == 'ps';
-
+    // چون فقط فارسی دری داریم، راست به چپ است
     return Directionality(
-      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
-          title: Text(S.of(context).appTitle),
+          title: const Text('شبکه افغانستان'),
           centerTitle: true,
           actions: [
             IconButton(
-              tooltip: widget.isDarkMode
-                  ? S.of(context).lightMode
-                  : S.of(context).darkMode,
+              tooltip: widget.isDarkMode ? 'حالت روشن' : 'حالت تاریک',
               icon: Icon(
                 widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
               ),
               onPressed: widget.toggleTheme,
             ),
-            PopupMenuButton<String>(
-              onSelected: _changeLanguage,
-              itemBuilder: (context) => [
-                PopupMenuItem(value: 'en', child: Text('English')),
-                PopupMenuItem(value: 'fa', child: Text('دری')),
-                PopupMenuItem(value: 'ps', child: Text('پښتو')),
-              ],
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(Icons.language, color: Theme.of(context).iconTheme.color),
-              ),
-            ),
+            // منوی تغییر زبان حذف شده چون فقط فارسی داریم
           ],
         ),
         body: FutureBuilder<List<Operator>>(
           future: futureOperators,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('❌ ${snapshot.error}'));
+              return Center(child: Text('❌ خطا: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text(S.of(context).noOperatorsFound));
+              return const Center(child: Text('اپراتوری یافت نشد'));
             }
 
             final operators = snapshot.data!;
             return GridView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: operators.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
@@ -137,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.network(operator.logo, height: 60),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             operator.name,
                             textAlign: TextAlign.center,
@@ -159,5 +138,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

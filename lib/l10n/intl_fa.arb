@@ -1,34 +1,0 @@
-{
-  "@@locale": "fa",
-  "appTitle": "برنامه‌ی شبکه افغان",
-  "noOperatorsFound": "هیچ اپراتوری پیدا نشد",
-  "darkMode": "حالت شب",
-  "lightMode": "حالت روشن",
-  "Services": "خدمات",
-  "noDetailsInPackages": "هیچ جزئیاتی در این بسته‌ها یافت نشد",
-  "notFoundAnyPackages": "هیچ بسته‌ای پیدا نشد",
-  "errorInFindingPackageDetails": "خطا در دریافت جزئیات بسته‌ها",
-  "noPackagesFound": "هیچ بسته‌ای یافت نشد.",
-  "noServicesFoundForOperator": "هیچ خدمتی برای این اپراتور یافت نشد.",
-  "servicesTitle": "خدمات - {operator}",
-  "noServicesFoundForOperator": "هیچ خدمتی برای این اپراتور یافت نشد.",
-  "errorFetchingServices": "❌ خطا: {error}",
-  "packagesTitle": "📦 بسته‌ها - {name}",
-  "noPackagesFound": "🚫 هیچ بسته‌ای یافت نشد.",
-  "errorFetchingPackages": "❌ خطا: {error}",
-  "codeLabel": "کد:",
-  "noDetailsAvailable": "هیچ جزئیاتی در دسترس نیست",
-  "close": "بستن",
-  "servicesOf": "خدمات از",
-  "noPackagesFound": "هیچ بسته‌ای یافت نشد",
-  "noDetailsFound": "هیچ جزئیاتی در این بسته یافت نشد",
-  "errorFetchingDetails": "خطا در دریافت جزئیات بسته",
-  "bundles": "بسته‌ها",
-  "noBundlesFound": "هیچ بسته‌ای پیدا نشد.",
-  "activation": "فعال‌سازی",
-  "deactivation": "غیرفعالسازی",
-  "checkBalance": "بررسی باقی‌مانده",
-  "afn": "افغانی"
-
-
-}
