@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -26,10 +27,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAndLoadServicePackages();
+    futurePackages = _checkAndLoadServicePackages();
   }
 
-  Future<void> _checkAndLoadServicePackages() async {
+  Future<List<ServicePackage>> _checkAndLoadServicePackages() async {
     final localPackages = await dbHelper.getServicePackages(widget.operator.id);
 
     if (localPackages.isEmpty) {
@@ -40,16 +41,14 @@ class _ServicesScreenState extends State<ServicesScreen> {
         for (var pkg in packagesFromApi) {
           await dbHelper.insertServicePackage(pkg);
         }
-        futurePackages = dbHelper.getServicePackages(widget.operator.id);
+        return dbHelper.getServicePackages(widget.operator.id);
       } else {
-        futurePackages = Future.value([]);
         print("❌ هیچ دیتایی یافت نشد و اینترنت هم قطع است.");
+        return [];
       }
     } else {
-      futurePackages = Future.value(localPackages);
+      return localPackages;
     }
-
-    setState(() {});
   }
 
   Icon _getIconForPackageName(String name, bool isDarkMode) {
@@ -122,7 +121,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Directionality(
-      textDirection: TextDirection.rtl, // فقط فارسی، راست به چپ
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           title: Text('خدمات ${widget.operator.name}'),
