@@ -1,11 +1,13 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
 import '../models/package.dart';
 import '../models/service_package.dart';
 import '../services/api_service.dart';
 import '../database/db_helper.dart';
-import 'bandels_screen.dart';
+import 'bandels_screen.dart'; // فرض بر اینکه این صفحه وجود دارد و باید import شود
 
 class PackagesScreen extends StatefulWidget {
   final ServicePackage servicePackage;
@@ -13,7 +15,7 @@ class PackagesScreen extends StatefulWidget {
   const PackagesScreen({Key? key, required this.servicePackage}) : super(key: key);
 
   @override
-  _PackagesScreenState createState() => _PackagesScreenState();
+  State<PackagesScreen> createState() => _PackagesScreenState();
 }
 
 class _PackagesScreenState extends State<PackagesScreen> {
@@ -25,6 +27,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
   @override
   void initState() {
     super.initState();
+    // مقدار اولیه دادن برای جلوگیری از خطای LateInitializationError
+    futurePackages = Future.value([]);
     _checkAndLoadPackages();
   }
 
@@ -40,16 +44,20 @@ class _PackagesScreenState extends State<PackagesScreen> {
           await dbHelper.insertPackage(pkg);
         }
 
-        futurePackages = dbHelper.getPackages(widget.servicePackage.id);
+        setState(() {
+          futurePackages = dbHelper.getPackages(widget.servicePackage.id);
+        });
       } else {
-        futurePackages = Future.value([]);
+        setState(() {
+          futurePackages = Future.value([]);
+        });
         print("❌ هیچ پکیجی یافت نشد و اینترنت قطع است.");
       }
     } else {
-      futurePackages = Future.value(localPackages);
+      setState(() {
+        futurePackages = Future.value(localPackages);
+      });
     }
-
-    setState(() {});
   }
 
   @override
@@ -58,7 +66,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Directionality(
-      textDirection: TextDirection.rtl,  // فقط زبان فارسی راست به چپ
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: isDarkMode ? Colors.black : Colors.grey.shade100,
         appBar: AppBar(
