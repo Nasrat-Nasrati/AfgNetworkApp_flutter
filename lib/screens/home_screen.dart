@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -25,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final syncService = SyncService();
   late Future<List<Operator>> futureOperators;
 
-  // تصاویر اسلایدشو
   final List<String> imagePaths = [
     'assets/images/1.png',
     'assets/images/2.png',
@@ -39,9 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAndSyncData();
-
-    // برای خودکار حرکت دادن اسلایدشو (هر 3 ثانیه)
+    futureOperators = _checkAndSyncData();
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
@@ -56,27 +54,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     _currentPage = nextPage;
-
     Future.delayed(const Duration(seconds: 3), _autoSlide);
   }
 
-  Future<void> _checkAndSyncData() async {
+  Future<List<Operator>> _checkAndSyncData() async {
     final localOperators = await dbHelper.getOperators();
 
     if (localOperators.isEmpty) {
       var connectivityResult = await Connectivity().checkConnectivity();
       if (connectivityResult != ConnectivityResult.none) {
         await syncService.syncAllData();
-        futureOperators = dbHelper.getOperators();
+        return await dbHelper.getOperators();
       } else {
-        futureOperators = Future.value([]);
         print("❌ دیتایی یافت نشد و اینترنت هم وصل نیست.");
+        return [];
       }
     } else {
-      futureOperators = Future.value(localOperators);
+      return localOperators;
     }
-
-    setState(() {});
   }
 
   @override
@@ -150,7 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-                      // اندیکاتور دایره‌ای
                       Padding(
                         padding: const EdgeInsets.only(top: 8, bottom: 4),
                         child: Row(
@@ -175,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // لیست اپراتورها با ارتفاع باقی مانده و قابلیت اسکرول
+                // لیست اپراتورها
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
