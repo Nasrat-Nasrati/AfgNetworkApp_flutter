@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -21,7 +22,9 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
   final ApiService apiService = ApiService();
   final DatabaseHelper dbHelper = DatabaseHelper();
   final connectivity = Connectivity();
-  late Future<List<Package>> futurePackages;
+
+  // مقداردهی اولیه با Future.value([]) تا ارور LateInitializationError رفع شود
+  late Future<List<Package>> futurePackages = Future.value([]);
 
   @override
   void initState() {
@@ -39,16 +42,20 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
         for (var item in fetched) {
           await dbHelper.insertPackage(item);
         }
-        futurePackages = dbHelper.getPackages(widget.servicePackage.id);
+        setState(() {
+          futurePackages = dbHelper.getPackages(widget.servicePackage.id);
+        });
       } else {
-        futurePackages = Future.value([]);
+        setState(() {
+          futurePackages = Future.value([]);
+        });
         print("📴 اینترنت قطع است و دیتایی موجود نیست.");
       }
     } else {
-      futurePackages = Future.value(localPackages);
+      setState(() {
+        futurePackages = Future.value(localPackages);
+      });
     }
-
-    setState(() {});
   }
 
   @override
@@ -78,7 +85,7 @@ class _GeneralServiceScreenState extends State<GeneralServiceScreen> {
             return Center(
               child: Text(
                 '❌ خطا در دریافت داده: ${snapshot.error}',
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
                 textAlign: TextAlign.center,
               ),
             );
