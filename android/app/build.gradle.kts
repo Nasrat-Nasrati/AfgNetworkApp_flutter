@@ -25,6 +25,7 @@ android {
         applicationId = "com.example.first_mobile_app_afg_network"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 21  // 👈 مقدار ثابت وارد کن
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
