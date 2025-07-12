@@ -16,6 +16,8 @@ dependencies:
   http: ^1.4.0
   connectivity_plus: ^5.0.2   # 👈 باید این‌جا باشد
   cupertino_icons: ^1.0.8
+  sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.3.0
 
 dev_dependencies:
   flutter_test:
